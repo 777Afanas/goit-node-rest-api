@@ -1,8 +1,7 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { func } from 'joi';
-import exp from 'node:constants';
+
 
 const contactsPath = path.resolve("db", "contacts.json");
 
@@ -34,16 +33,17 @@ async function getContactById(contactId) {
 
 async function removeContact(contactId) {
     const contacts = await readContacts();
-    const index = contacts.findIndex((contacts) => contacts.id === contactId)
+    // const index = contacts.findIndex((contacts) => contacts.id === contactId);    см ДР 1
+    const index = contacts.findIndex((contact) => contact.id === contactId);
     if (index === -1) {
         return null;
     }
 
-    const removeContact = contacts[index];
-    const newContacts = [...contacts.slise(0, index), ...contacts.slise(index + 1)];
+    const removedContact = contacts[index];
+    const newContacts = [...contacts.slice(0, index), ...contacts.slice(index + 1)];
     await writeContacts(newContacts);
 
-    return removeContact;
+    return removedContact;
 }
 
 async function addContact(name, email, phone) {
