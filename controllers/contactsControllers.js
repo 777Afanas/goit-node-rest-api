@@ -1,59 +1,97 @@
-import HttpError from "../helpers/HttpError.js";
-import contactsServices from "../services/contactsServices.js";
-// import contactsService from "../services/contactsServices.js";
 
-export const getAllContacts = async (req, res) => {
+import contactsServices from "../services/contactsServices.js";
+import {
+  createContactSchema,
+  updateContactSchema,
+} from "../schemas/contactsSchemas.js";
+
+export const getAllContacts = async (req, res, next) => {
+  try {
     const result = await contactsServices.listContacts();
 
-    res.json(result);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const getOneContact = async (req, res) => {
-    const { id } = req.params;     
-
+export const getOneContact = async (req, res, next) => {
+  try {
+    const { id } = req.params;
     const result = await contactsServices.getContactById(id);
     if (!result) {
-    //   throw HttpError(404, `Not found`);
-      const error = new Error(`Not found`);
-      error.status = 404;
-      throw error;
-      return res.status(404).json({
-          message: `Not found`
-      })
+      res.status(404).json({ message: "Not found" });
     }
-    console.log(result);
-    res.json(result);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const deleteContact = async (req, res) => {
+export const deleteContact = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await contactsServices.removeContact(id);
+    if (!result) {
+      res.status(404).json({ message: "Not found" });
+    }
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createContact = async (req, res, next) => {
+  const contact = {
+    name: req.body.name,
+    email: req.body.email,
+    phone: req.body.phone,
+  };
+
+  const { error } = createContactSchema.validate(contact, {
+    convert: false,
+  });
+  if (error) {
+    return res.status(400).json({ message: "Filds must be filled" });
+  }
+
+  try {
+    const result = await contactsServices.addContact(req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateContact = async (req, res, next) => {
   const { id } = req.params;
-  console.log(req.params);
+  const { name, email, phone } = req.body;
+  
+  if (Object.keys(req.body).length === 0) {
+    return res
+      .status(400)
+      .json({ message: "Body must have at least one field" });
+  }
+ 
+  const { error } = updateContactSchema.validate({ name, email, phone }); 
+ 
+  if (error) {
+    return res.status(400).json({ message: "Filds must be filled" });
+  }
 
-  const result = await contactsServices.removeContact(id);
-  // if (!result) {
-  //         throw HttpError(404, `Not found`)
-  // }
-  console.log(result);
-  res.json(result);
+  try {
+    const result = await contactsServices.updateContact(id, req.body);
+
+    if (!result) {
+      res.status(404).json({ message: "Not found" });
+    }
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const createContact = (req, res) => {};
 
-export const updateContact = (req, res) => {};
-
-
-
-// @ GET /api/contacts
-// Викликає функцію-сервіс listContacts для роботи з json-файлом contacts.json
-// Повертає масив всіх контактів в json-форматі зі статусом 200
-
-// GET /api/contacts/:id
-// Викликає функцію-сервіс getContactById для роботи з json-файлом contacts.json
-// Якщо контакт за id знайдений, повертає об'єкт контакту в json-форматі зі статусом 200
-// Якщо контакт за id не знайдено, повертає json формату {"message": "Not found"} зі статусом 404
-
-
-// @ DELETE /api/contacts/:id
-// Викликає функцію-сервіс removeContact для роботи з json-файлом contacts.json
-// Якщо контакт за id знайдений і видалений, повертає об'єкт видаленого контакту в json-форматі зі статусом 200
-// Якщо контакт за id не знайдено, повертає json формату {"message": "Not found"} зі статусом 404

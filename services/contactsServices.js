@@ -32,8 +32,7 @@ async function getContactById(contactId) {
 }
 
 async function removeContact(contactId) {
-    const contacts = await readContacts();
-    // const index = contacts.findIndex((contacts) => contacts.id === contactId);    см ДР 1
+    const contacts = await readContacts();     
     const index = contacts.findIndex((contact) => contact.id === contactId);
     if (index === -1) {
         return null;
@@ -47,13 +46,29 @@ async function removeContact(contactId) {
 }
 
 async function addContact(name, email, phone) {
-    const contact = await readContacts();
+    const contacts = await readContacts();
 
-    const newContact = { id: crypto.randomUUID(), ...name, email, phone };
+    const newContact = { id: crypto.randomUUID(), ...name, ...email, ...phone };
     contacts.push(newContact);
 
     await writeContacts(contacts);
     return newContact;
 }
 
-export default { listContacts, getContactById, removeContact, addContact}
+async function updateContact(id, contact) {
+    const contacts = await readContacts();  
+    
+    const index = contacts.findIndex((contact) => contact.id === id);
+    if (index === -1) {
+        return null;
+    }
+    const updatedContact = {  id, ...contact };
+    
+    const newContacts = [...contacts.slice(0, index), updatedContact, ...contacts.slice(index + 1)];
+    await writeContacts(newContacts);
+
+    return updatedContact;
+}
+
+
+export default { listContacts, getContactById, removeContact, addContact, updateContact }
