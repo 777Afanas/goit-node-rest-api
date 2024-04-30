@@ -81,8 +81,8 @@ export const updateContact = async (req, res, next) => {
     return res.status(400).json({ message: "Filds must be filled" });
   }
 
-  try {
-    const result = await contactsServices.updateContact(id, req.body);
+  try {     
+    const result = await contactsServices.updateContact(id, name, email, phone);
 
     if (!result) {
       res.status(404).json({ message: "Not found" });
