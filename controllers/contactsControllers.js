@@ -5,6 +5,7 @@ import {
   updateContactSchema,
 } from "../schemas/contactsSchemas.js";
 
+
 export const getAllContacts = async (req, res, next) => {
   try {
     const result = await contactsServices.listContacts();
