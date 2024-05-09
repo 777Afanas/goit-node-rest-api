@@ -5,6 +5,8 @@ import morgan from "morgan";
 import cors from "cors";
 
 import contactsRouter from "./routes/contactsRouter.js";
+import authRouter from "./routes/auth.js";
+  
 import "./db.js";
 
 const app = express();
@@ -12,6 +14,9 @@ const app = express();
 app.use(morgan("tiny"));
 app.use(cors());  
 
+// POST /users/register
+
+app.use("/users", authRouter);
 app.use("/api/contacts", contactsRouter);
 
 
