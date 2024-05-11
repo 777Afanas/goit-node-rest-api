@@ -5,7 +5,7 @@ const authRouter = express.Router();
 const jsonParser = express.json();
 
 
-authRouter.post("/", jsonParser, AuthController.register);
+authRouter.post("/register", jsonParser, AuthController.register);
 // authRouter.post("/login", jsonParser, AuthController.login);
 
 
