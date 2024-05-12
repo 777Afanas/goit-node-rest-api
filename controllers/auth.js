@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 import User from "../models/user.js";
 import { authSchema } from "../schemas/authSchemas.js";
@@ -67,7 +68,9 @@ async function login(req, res, next) {
             .send({ message: "Email or password is wrong" });
         }
 
-        res.send({ token: "TOKEN" });
+        const token = jwt.sign({ id: user._id, token: user.token }, process.env.JWT_SECRET, {expiresIn: "2 days"});
+
+        res.send({ token });
     //   res.status(201).json({ email, subscription });
     } catch (error) {
       next(error);

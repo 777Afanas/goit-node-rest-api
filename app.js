@@ -3,6 +3,7 @@ import "dotenv/config";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import authMiddleware from "./middleware/auth.js";
 
 import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/auth.js";
@@ -17,7 +18,7 @@ app.use(cors());
 // POST /users/register
 
 app.use("/users", authRouter);
-app.use("/api/contacts", contactsRouter);
+app.use("/api/contacts", authMiddleware, contactsRouter);
 
 
 app.use((req, res, next) => {

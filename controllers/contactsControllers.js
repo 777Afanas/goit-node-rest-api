@@ -8,6 +8,7 @@ import {
 
 
 export const getAllContacts = async (req, res, next) => {
+  console.log({ user: req.user });
   try {
     const result = await Contact.find();
 
@@ -49,10 +50,19 @@ export const deleteContact = async (req, res, next) => {
 };
 
 export const createContact = async (req, res, next) => {
+  // const contact = {
+  //   name: req.body.name,
+  //   email: req.body.email,
+  //   phone: req.body.phone,
+  //   owner: req.user.id,
+  // };
+
   const contact = {
     name: req.body.name,
     email: req.body.email,
     phone: req.body.phone,
+    favorite: req.body.favorite,
+    owner: req.user.id,
   };
 
   const { error } = createContactSchema.validate(contact, {
