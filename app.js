@@ -15,8 +15,6 @@ const app = express();
 app.use(morgan("tiny"));
 app.use(cors());  
 
-// POST /users/register
-
 app.use("/users", authRouter);
 app.use("/api/contacts", authMiddleware, contactsRouter);
 

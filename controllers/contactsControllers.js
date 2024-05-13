@@ -1,3 +1,4 @@
+import contact from "../models/contact.js";
 import Contact from "../models/contact.js";  
 
 import {
@@ -8,9 +9,9 @@ import {
 
 
 export const getAllContacts = async (req, res, next) => {
-  console.log({ user: req.user });
+  // console.log({ user: req.user });
   try {
-    const result = await Contact.find();
+    const result = await Contact.find({owner:req.user.id});
 
     res.status(200).json(result);
   } catch (error) {
@@ -26,6 +27,11 @@ export const getOneContact = async (req, res, next) => {
 
     if (result === null) {
       return res.status(404).json({ message: "Not found" });
+    }
+
+    if (contact.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Contact is forbidden" });
+      // return res.status(404).json({ message: "Not found" });
     }
 
     res.status(200).json(result);
@@ -50,13 +56,6 @@ export const deleteContact = async (req, res, next) => {
 };
 
 export const createContact = async (req, res, next) => {
-  // const contact = {
-  //   name: req.body.name,
-  //   email: req.body.email,
-  //   phone: req.body.phone,
-  //   owner: req.user.id,
-  // };
-
   const contact = {
     name: req.body.name,
     email: req.body.email,
@@ -65,12 +64,14 @@ export const createContact = async (req, res, next) => {
     owner: req.user.id,
   };
 
-  const { error } = createContactSchema.validate(contact, {
-    convert: false,
-  });
-  if (error) {
-    return res.status(400).json({ message: "Fields must be filled" });
-  }
+  console.log(contact);
+
+  // const { error } = createContactSchema.validate(contact, {
+  //   convert: false,
+  // });
+  // if (error) {
+  //   return res.status(400).json({ message: "Fields must be filled" });
+  // }
 
   try {
     const result = await Contact.create(contact);

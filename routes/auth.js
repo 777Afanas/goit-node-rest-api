@@ -1,6 +1,6 @@
 import express from "express";
 import AuthController from "../controllers/auth.js";
-// import authMiddleware from "../middleware/auth.js";
+import authMiddleware from "../middleware/auth.js";
 
 const authRouter = express.Router();
 const jsonParser = express.json();
@@ -8,6 +8,6 @@ const jsonParser = express.json();
 
 authRouter.post("/register", jsonParser, AuthController.register);
 authRouter.post("/login", jsonParser, AuthController.login);
-
+authRouter.get("/logout", authMiddleware, AuthController.logout);
 
 export default authRouter;
