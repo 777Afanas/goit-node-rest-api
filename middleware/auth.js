@@ -12,7 +12,7 @@ function auth(req, res, next) {
   }
 
   const [bearer, token] = authorizationHeader.split(" ", 2);
-  console.log({ bearer, token });
+  // console.log({ bearer, token });
 
   if (bearer !== "Bearer") {
     return res.status(401).send({ message: "Invalid token" });
@@ -37,7 +37,8 @@ function auth(req, res, next) {
     //   console.log({ decode });
       req.user = {
         id: decode.id,
-        };
+        // email: decode.email,
+      };
         
       next();
     } catch (error) {
