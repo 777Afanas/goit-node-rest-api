@@ -5,7 +5,9 @@ import User from "../models/user.js";
 import { authSchema } from "../schemas/authSchemas.js";
 
 async function register(req, res, next) {
+  
   const { password, email, subscription, token } = req.body;
+  // const { password, email, subscription } = req.body;
 
   const { error } = authSchema.validate(req.body, {
     convert: false,
@@ -22,6 +24,8 @@ async function register(req, res, next) {
       return res.status(409).send({ message: "User already registered" });
     }
 
+
+    // Хешування паролю (сіль)
     const passwordHash = await bcrypt.hash(password, 10);
 
     const result = await User.create({
@@ -30,9 +34,12 @@ async function register(req, res, next) {
       subscription,
       token,
     });
-
-    //   res.status(201).send({ message: "Registration succeffully" });
-    res.status(201).json({ user: { email, subscription } });
+    
+    console.log({result});
+    // const uuu = { result : email};
+    
+      
+    res.status(201).json({ result: {subscription} } );
   } catch (error) {
     next(error);
   }
@@ -87,13 +94,15 @@ async function logout(req, res, next) {
 }
 
 async function current(req, res, next) {
+  // console.log(req.body);
+  // res.send("Current");
   const { id } = req.user;
   try {
     const currentUser = await User.findById(id);
 
     if (!currentUser) {
       return res.status(401).send({ message: "Not authorized" });
-    }     
+    }
     res.status(200).json({ email, subscription });
   } catch (error) {
     next(error);
