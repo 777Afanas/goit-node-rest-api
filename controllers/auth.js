@@ -31,9 +31,9 @@ async function register(req, res, next) {
       token,
     });
 
-    //   res.status(201).send({ message: "Registration succeffully" });
-    // res.status(201).json({ user: { email, subscription } });
-    res.status(201).json({ result: { email, subscription } });
+    
+    res.status(201).json({ user: { email, subscription: result.subscription } });
+    
   } catch (error) {
     next(error);
   }
