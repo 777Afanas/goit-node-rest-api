@@ -1,4 +1,4 @@
-import contact from "../models/contact.js";
+// import contact from "../models/contact.js";
 import Contact from "../models/contact.js";
 
 import {
@@ -8,8 +8,10 @@ import {
 } from "../schemas/contactsSchemas.js";
 
 export const getAllContacts = async (req, res, next) => {
+  // console.log(req.user);
   // console.log({ user: req.user });
   try {
+    // бере тільки книги в яких owner дроівнює user.id
     const result = await Contact.find({ owner: req.user.id });
 
     res.status(200).json(result);
@@ -70,9 +72,9 @@ export const createContact = async (req, res, next) => {
     phone: req.body.phone,
     favorite: req.body.favorite,
     owner: req.user.id,
-  };
-
-  console.log(contact);
+  }; 
+  
+  // console.log(contact);
 
   // const { error } = createContactSchema.validate(contact, {
   //   convert: false,

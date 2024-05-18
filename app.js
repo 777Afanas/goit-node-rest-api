@@ -16,6 +16,7 @@ app.use(morgan("tiny"));
 app.use(cors());  
 
 app.use("/users", authRouter);
+// з міддлварою - перевірка токена
 app.use("/api/contacts", authMiddleware, contactsRouter);
 
 
