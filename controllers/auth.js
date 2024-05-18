@@ -24,7 +24,6 @@ async function register(req, res, next) {
       return res.status(409).send({ message: "User already registered" });
     }
 
-
     // Хешування паролю (сіль)
     const passwordHash = await bcrypt.hash(password, 10);
 
@@ -34,12 +33,9 @@ async function register(req, res, next) {
       subscription,
       token,
     });
+
     
-    console.log({result});
-    // const uuu = { result : email};
-    
-      
-    res.status(201).json({ result: {subscription} } );
+    res.status(201).json({ user: { email, subscription: result.subscription } });
   } catch (error) {
     next(error);
   }
