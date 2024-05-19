@@ -5,6 +5,8 @@ export const authSchema = Joi.object({
   email: Joi.string().email().trim().required(),
   subscription: Joi.string(),
   token: Joi.string().token(),
+  // avatarURL: Joi.string().required(),
+  avatarURL: Joi.string(),
 });
 
 

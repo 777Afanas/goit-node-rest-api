@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import gravatar from "gravatar";
 
 import User from "../models/user.js";
 import { authSchema } from "../schemas/authSchemas.js";
@@ -22,15 +23,20 @@ async function register(req, res, next) {
     if (user !== null) {
       return res.status(409).send({ message: "User already registered" });
     }
+    // генеруємо постилання на тимчасову аватарку (ТА)- 
+    // у обекта ГРАВАТВР викликаємо метод url, і передаємо email людини яка хоче зарєеструватися -
+    // нам повертається посилання на ТА
+    const avatarURL = gravatar.url(email);
 
     // Хешування паролю (сіль)
     const passwordHash = await bcrypt.hash(password, 10);
-
+    // посилання на ТА зберігаємо в базі
     const result = await User.create({
       email,
       password: passwordHash,
       subscription,
       token,
+      avatarURL,
     });
 
     res.status(201).json({

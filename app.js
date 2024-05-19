@@ -4,11 +4,13 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import authMiddleware from "./middleware/auth.js";
-
-import contactsRouter from "./routes/contactsRouter.js";
+ 
 import authRouter from "./routes/auth.js";
-  
+import avatarRouter from "./routes/users.js";
+import contactsRouter from "./routes/contactsRouter.js";
+
 import "./db.js";
+
 
 const app = express();
 
@@ -16,6 +18,7 @@ app.use(morgan("tiny"));
 app.use(cors());  
 
 app.use("/users", authRouter);
+app.use("/users", authMiddleware, avatarRouter);
 // з міддлварою - перевірка токена
 app.use("/api/contacts", authMiddleware, contactsRouter);
 

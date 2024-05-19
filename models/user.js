@@ -19,7 +19,12 @@ const userSchema = new mongoose.Schema(
     token: {
       type: String,
       default: null,
-    }    
+    },
+    avatarURL: {
+      type: String,
+      // default: null,
+      // required: true,
+    },
   },
   {
     timestamps: true,
