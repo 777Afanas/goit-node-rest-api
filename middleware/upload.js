@@ -23,3 +23,5 @@ const storage = multer.diskStorage({
 }); 
 
 export default multer({ storage });
+
+// унфверсальна мідллвара - все скидає в папку TMP і дає унікальну назву
