@@ -1,21 +1,27 @@
 import "dotenv/config";
-
+import path from "node:path";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import authMiddleware from "./middleware/auth.js";
-
-import contactsRouter from "./routes/contactsRouter.js";
+ 
 import authRouter from "./routes/auth.js";
-  
+import avatarRouter from "./routes/users.js";
+import contactsRouter from "./routes/contactsRouter.js";
+
 import "./db.js";
+
 
 const app = express();
 
 app.use(morgan("tiny"));
 app.use(cors());  
 
+// налаштування, щоб експресс віддавав статичні файли папки pablic/avatars
+app.use("/avatars", express.static(path.resolve("public/avatars"))); 
 app.use("/users", authRouter);
+app.use("/users", authMiddleware, avatarRouter);
+// з міддлварою - перевірка токена
 app.use("/api/contacts", authMiddleware, contactsRouter);
 
 
