@@ -2,6 +2,7 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import User from "../models/user.js";
 import Jimp from "jimp";
+// import { func } from "joi";
 
 async function uploadAvatar(req, res, next) {
   try {
@@ -37,20 +38,61 @@ async function uploadAvatar(req, res, next) {
 async function emailVerify(req, res, next) {
   const { verificationToken } = req.params;
 
-    try {
-      // пошук користувача по токену верифікації email - verificationToken
-      const user = await User.findOne({ verificationToken });
-      // якщо токен верифікації email (verificationToken) некоректний - 404
-      if (user === null) {
-        return res.status(404).send({message: "User not found"});
-      }
+  try {
+    // 1 варіант
+    // пошук користувача по токену верифікації email - verificationToken
+    const user = await User.findOneAndUpdate(
+      { verificationToken },
+      {
+        verify: true,
+        verificationToken: null,
+      },
+      { new: true }
+    );
 
-      await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: null });
-      res.send({ message: "Email confirm successfully" });
+    // якщо токен верифікації email (verificationToken) некоректний - 404
+    if (user === null) {
+      return res.status(404).send({ message: "User not found" });
+    }
 
-    } catch (error) {
+    // 2 варіант
+    // // пошук користувача по токену верифікації email - verificationToken
+    // const user = await User.findOne({ verificationToken });
+    // // якщо токен верифікації email (verificationToken) некоректний - 404
+    // if (user === null) {
+    //   return res.status(404).send({ message: "User not found" });
+    // }
+    // await User.findByIdAndUpdate(user._id, {
+    //   verify: true,
+    //   verificationToken: null,
+    // });
+
+    res.status(200).send({ message: "Email confirm successfully" }); 
+
+  } catch (error) {
     next(error);
   } 
+
+
+  async function resendingVerify(req, res, next) {
+    const { email } = req.body;
+
+    try {
+      const user = await User.findOne({ email })
+      console.log(user);
+      if (user === null) {
+        return res
+          .status(400)
+          .send({ message: "missing required field email" });         
+      }
+
+
+      
+    } catch (error) {
+      next(error);
+    }
+  }
+
 } 
 
 export default { uploadAvatar, emailVerify };

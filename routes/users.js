@@ -17,4 +17,7 @@ avatarRouter.patch(
 // ендпоінт для верифікації email
 avatarRouter.get("/verify/:verificationToken", UserController.emailVerify);
 
+// ендпоінт Додавання повторної відправки email користувачу з посиланням для верифікації
+// avatarRouter.post("/verify", UserController.resendingVerify);
+
 export default avatarRouter;

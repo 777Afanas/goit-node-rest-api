@@ -5,7 +5,8 @@ import gravatar from "gravatar";
 
 import mail from "../mail.js";
 import User from "../models/user.js";
-import { authSchema } from "../schemas/authSchemas.js";
+import { authSchema, authLogSchema } from "../schemas/authSchemas.js";
+
 
 async function register(req, res, next) {
   const { password, email, subscription, token } = req.body;
@@ -32,7 +33,7 @@ async function register(req, res, next) {
 
     // Хешування паролю (сіль)
     const passwordHash = await bcrypt.hash(password, 10);
-    // створення токену для верифікації email
+    // створення verificationToken - токену для верифікації email
     const verificationToken = crypto.randomUUID();
 
     // посилання на ТА зберігаємо в базі
@@ -53,7 +54,6 @@ async function register(req, res, next) {
       html: `To confirm your email please go to the <a href="http://localhost:3000/users/verify/${verificationToken}">link</a>`,
       text: `To confirm your email please open the link http://localhost:3000/users/verify/${verificationToken}`,
     });
-   
 
     res.status(201).json({
       user: {
@@ -68,11 +68,11 @@ async function register(req, res, next) {
 
 async function login(req, res, next) {
   const { password, email } = req.body;
-
-  const { error } = authSchema.validate(req.body, {
+  
+  const { error } = authLogSchema.validate(req.body, {
     convert: false,
   });
-  if (error) {
+  if (error) { 
     return res
       .status(400)
       .json({ message: "Fields must be filled in correctly" });
