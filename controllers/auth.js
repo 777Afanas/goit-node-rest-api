@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import gravatar from "gravatar";
 
+import mail from "../mail.js";
 import User from "../models/user.js";
 import { authSchema } from "../schemas/authSchemas.js";
 
@@ -38,6 +39,10 @@ async function register(req, res, next) {
       token,
       avatarURL,
     });
+
+    mail.sendMail({
+      
+    })
 
     res.status(201).json({
       user: {
