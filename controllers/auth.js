@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import gravatar from "gravatar";
@@ -24,13 +25,16 @@ async function register(req, res, next) {
     if (user !== null) {
       return res.status(409).send({ message: "User already registered" });
     }
-    // генеруємо постилання на тимчасову аватарку (ТА)- 
+    // генеруємо постилання на тимчасову аватарку (ТА)-
     // у обекта ГРАВАТВР викликаємо метод url, і передаємо email людини яка хоче зарєеструватися -
     // нам повертається посилання на ТА
     const avatarURL = gravatar.url(email);
 
     // Хешування паролю (сіль)
     const passwordHash = await bcrypt.hash(password, 10);
+    // створення токену для верифікації email
+    const verifyToken = crypto.randomUUID();
+
     // посилання на ТА зберігаємо в базі
     const result = await User.create({
       email,
@@ -38,11 +42,19 @@ async function register(req, res, next) {
       subscription,
       token,
       avatarURL,
+      verifyToken,
     });
 
+    // відправка повідомлення щодо верифікації email користувача
     mail.sendMail({
-      
-    })
+      to: mail,
+      from: "serhii2111@yahoo.com",
+      subject: "Welcom to Contactsbase",
+      html: `To confirm your email please go to the <a href="http://localhost:3000/users/verify/${verifyToken}">link</a>`,
+      text: "To confirm your email please go to the link",
+    });
+
+    // users/verify/:verificationToken
 
     res.status(201).json({
       user: {
