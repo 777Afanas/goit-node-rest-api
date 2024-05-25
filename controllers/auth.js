@@ -51,7 +51,7 @@ async function register(req, res, next) {
       from: "serhii2111@yahoo.com",
       subject: "Welcom to Contactsbase",
       html: `To confirm your email please go to the <a href="http://localhost:3000/users/verify/${verifyToken}">link</a>`,
-      text: "To confirm your email please go to the link",
+      text: `To confirm your email please open the link http://localhost:3000/users/verify/${verifyToken}`,
     });
 
     // users/verify/:verificationToken
