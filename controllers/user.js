@@ -34,4 +34,23 @@ async function uploadAvatar(req, res, next) {
   }
 }
 
-export default { uploadAvatar };
+async function emailVerify(req, res, next) {
+  const { verificationToken } = req.params;
+
+    try {
+      // пошук користувача по токену верифікації email - verificationToken
+      const user = await User.findOne({ verificationToken });
+      // якщо токен верифікації email (verificationToken) некоректний - 404
+      if (user === null) {
+        return res.status(404).send({message: "User not found"});
+      }
+
+      await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: null });
+      res.send({ message: "Email confirm successfully" });
+
+    } catch (error) {
+    next(error);
+  } 
+} 
+
+export default { uploadAvatar, emailVerify };

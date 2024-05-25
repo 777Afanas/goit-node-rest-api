@@ -20,7 +20,8 @@ app.use(cors());
 // налаштування, щоб експресс віддавав статичні файли папки pablic/avatars
 app.use("/avatars", express.static(path.resolve("public/avatars"))); 
 app.use("/users", authRouter);
-app.use("/users", authMiddleware, avatarRouter);
+
+app.use("/users", avatarRouter);
 // з міддлварою - перевірка токена
 app.use("/api/contacts", authMiddleware, contactsRouter);
 
