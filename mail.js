@@ -1,4 +1,4 @@
-import "dotenv/config";
+// import "dotenv/config";
 import nodemailer from "nodemailer";
 
 
@@ -7,7 +7,7 @@ const transport = nodemailer.createTransport({
     port: 2525,
     auth: {
         user: process.env.MAILTRAP_USERNAME,
-        pass: process.env.MAILTRAP_PASSWORD
+        pass: process.env.MAILTRAP_PASSWORD,
     },
 });
 

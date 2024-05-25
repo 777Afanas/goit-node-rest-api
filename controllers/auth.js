@@ -33,7 +33,7 @@ async function register(req, res, next) {
     // Хешування паролю (сіль)
     const passwordHash = await bcrypt.hash(password, 10);
     // створення токену для верифікації email
-    const verifyToken = crypto.randomUUID();
+    const verificationToken = crypto.randomUUID();
 
     // посилання на ТА зберігаємо в базі
     const result = await User.create({
@@ -42,19 +42,18 @@ async function register(req, res, next) {
       subscription,
       token,
       avatarURL,
-      verifyToken,
+      verificationToken,
     });
 
     // відправка повідомлення щодо верифікації email користувача
     mail.sendMail({
-      to: mail,
+      to: email,
       from: "serhii2111@yahoo.com",
       subject: "Welcom to Contactsbase",
-      html: `To confirm your email please go to the <a href="http://localhost:3000/users/verify/${verifyToken}">link</a>`,
-      text: `To confirm your email please open the link http://localhost:3000/users/verify/${verifyToken}`,
+      html: `To confirm your email please go to the <a href="http://localhost:3000/users/verify/${verificationToken}">link</a>`,
+      text: `To confirm your email please open the link http://localhost:3000/users/verify/${verificationToken}`,
     });
-
-    // users/verify/:verificationToken
+   
 
     res.status(201).json({
       user: {
@@ -80,18 +79,28 @@ async function login(req, res, next) {
   }
 
   try {
+    // шукаємо чи є користувач з таким email
     const user = await User.findOne({ email });
-    // есть ли юзер с таким емейлом  -   если нет  - 401
+    // есть ли юзер с таким емейлом  -  якшо нема такого кристувача  "user === null" тоді - 401
     if (user === null) {
-      // console.log("email");
-      return res.status(401).send({ message: "Email or password is wrong" });
+      return res
+        .status(401)
+        .send({ message: "Email or password is incorrect" });
     }
     // сравниваем пароль юзера с хешем которій храниться в его документе в базе данных
     const isMatch = await bcrypt.compare(password, user.password);
+    // якщо пароль не співпадає -
     if (isMatch === false) {
       // console.log("password");
-      return res.status(401).send({ message: "Email or password is wrong" });
+      return res
+        .status(401)
+        .send({ message: "Email or password is incorrect" });
     }
+    // перевірка веріфікації email користувача - якщо не верифікований - 401 verify your email - login не дозволено
+    if (user.verify === false) {
+      return res.status(401).send({ message: "Please verify your email" });
+    }
+
     //  випускаємо токен
     const token = jwt.sign(
       { id: user._id, email: user.email },
