@@ -2,6 +2,8 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import User from "../models/user.js";
 import Jimp from "jimp";
+import { authResendVerifySchema } from "../schemas/authSchemas.js";
+import mail from "../mail.js";
 // import { func } from "joi";
 
 async function uploadAvatar(req, res, next) {
@@ -67,32 +69,53 @@ async function emailVerify(req, res, next) {
     //   verificationToken: null,
     // });
 
-    res.status(200).send({ message: "Email confirm successfully" }); 
-
+    res.status(200).send({ message: "Email confirm successfully" });
   } catch (error) {
     next(error);
-  } 
-
-
-  async function resendingVerify(req, res, next) {
-    const { email } = req.body;
-
-    try {
-      const user = await User.findOne({ email })
-      console.log(user);
-      if (user === null) {
-        return res
-          .status(400)
-          .send({ message: "missing required field email" });         
-      }
-
-
-      
-    } catch (error) {
-      next(error);
-    }
   }
 
-} 
+  
+}
 
-export default { uploadAvatar, emailVerify };
+async function resendingVerify(req, res, next) {
+  const { email } = req.body;
+
+  const { error } = authResendVerifySchema.validate(req.body, {
+    convert: false,
+  });
+  if (error) {
+    return res
+      .status(400)
+      .json({ message: "Fields must be filled in correctly" });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    // Перевірка чи є мейл в базі, якщо нема – помилка, - Якщо в body немає обов'язкового поля email
+    if (!user) {
+      return res.status(400).send({ message: "Missing required field email" });
+    }
+    // Перевірка -  як що юзер може вже верифікований - помилка - Якщо користувач вже пройшов верифікацію
+    if (user.verify) {
+      return res.status(400).send({ message: "Email already verify" });
+    }
+
+    // відправка повідомлення щодо верифікації email користувача
+    // Якщо з body все добре і користувач не верифікований, повторна відправка листа
+    // з verificationToken (його беремо з бази) на вказаний email
+    mail.sendMail({
+      to: email,
+      from: "serhii2111@yahoo.com",
+      subject: "Welcom to Contactsbase",
+      html: `To confirm your email please go to the <a href="http://localhost:3000/users/verify/${user.verificationToken}">link</a>`,
+      text: `To confirm your email please open the link http://localhost:3000/users/verify/${user.verificationToken}`,
+    });
+
+    res.status(201).json({ message: "Verify email send success" });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export default { uploadAvatar, emailVerify, resendingVerify };

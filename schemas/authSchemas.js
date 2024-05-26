@@ -20,5 +20,9 @@ export const authLogSchema = Joi.object({
   verificationToken: Joi.string(),
 });
 
+export const authResendVerifySchema = Joi.object({
+  email: Joi.string().email().trim().required(),
+});
+
 
  
