@@ -8,6 +8,8 @@ const app = express();
 
 app.use(morgan("tiny"));
 app.use(cors());
+
+// глобальна мідлвара парсить req.body
 app.use(express.json());
 
 app.use("/api/contacts", contactsRouter);
