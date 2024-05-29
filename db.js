@@ -1,7 +1,10 @@
+
+// mongodb object modeling tool designed to work in an asynchronous enviroment, supports node.js
 import mongoose from "mongoose";
 
 const DB_URI = process.env.DB_URI;
 
+// підєднання до бази даних
 mongoose
     .connect(DB_URI)
     .then(() => console.log("Database connection successfully"))

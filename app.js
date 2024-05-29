@@ -1,3 +1,4 @@
+// loads environment variables from .env file into  process.env
 import "dotenv/config";
 
 import express from "express";
