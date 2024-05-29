@@ -1,5 +1,6 @@
 
-import contactsServices from "../services/contactsServices.js";
+import contactsServices from "../services/contactsServices.js"; 
+// імпорт схем валідації для боді
 import {
   createContactSchema,
   updateContactSchema,
@@ -44,17 +45,18 @@ export const deleteContact = async (req, res, next) => {
 };
 
 export const createContact = async (req, res, next) => {
+  // об'єкт  contact - з полями які зчитуються з боді
   const contact = {
     name: req.body.name,
     email: req.body.email,
     phone: req.body.phone,
   };
-
+// деструктурізація  = валідація значень полів чкі валідуються  - та повернення у відповідь
   const { error } = createContactSchema.validate(contact, {
     convert: false,
   });
   if (error) {
-    return res.status(400).json({ message: "Filds must be filled" });
+    return res.status(400).json({ message: "Filds must be filled" }); // або  "Validatiom error"
   }
 
   try {
