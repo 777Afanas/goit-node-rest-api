@@ -1,5 +1,6 @@
 import express from "express";
 import morgan from "morgan";
+// cross-origin resource sharing (CORS)
 import cors from "cors";
 
 import contactsRouter from "./routes/contactsRouter.js";
@@ -7,6 +8,7 @@ import contactsRouter from "./routes/contactsRouter.js";
 const app = express();
 
 app.use(morgan("tiny"));
+// мідлвара що забазпечує cross-origin resource sharing (CORS)
 app.use(cors());
 
 // глобальна мідлвара парсить req.body    jsonParser
