@@ -16,9 +16,9 @@ export const updateContactSchema = Joi.object({
 });
 
 export const updateStatusContactSchema = Joi.object({
-        name: Joi.string(),
-        email: Joi.string().email(),
-        phone: Joi.string(),
+        // name: Joi.string(),
+        // email: Joi.string().email(),
+        // phone: Joi.string(),
         favorite: Joi.boolean(),
 });
 

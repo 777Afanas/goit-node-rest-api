@@ -127,9 +127,9 @@ export const updateStatusContact = async (req, res, next) => {
   const { id } = req.params;   
 
    const contact = {
-    name: req.body.name,
-    email: req.body.email,
-     phone: req.body.phone,
+    // name: req.body.name,
+    // email: req.body.email,
+    //  phone: req.body.phone,
     favorite: req.body.favorite,
   };
   
