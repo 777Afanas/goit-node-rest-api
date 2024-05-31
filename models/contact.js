@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-
+// опис моделі  для mongoose
 const contactSchema = new mongoose.Schema(
     {
         name: {
@@ -19,6 +19,7 @@ const contactSchema = new mongoose.Schema(
         },
     },
     {
+        // автоматичне додавання полів createdAt / updatedAT (стварення / оновлення ресурусу) об'єкту в БД 
         timestamps: true,
     }
 );

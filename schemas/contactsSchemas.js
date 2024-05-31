@@ -1,5 +1,8 @@
 import Joi from "joi";
 
+
+// бажано винести перевірку id на тип ObjectId
+
 export const createContactSchema = Joi.object({
         name: Joi.string().required(),
         email: Joi.string().email().required(),
