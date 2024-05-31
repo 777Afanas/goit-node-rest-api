@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-
+// опис моделі  для mongoose
 const contactSchema = new mongoose.Schema(
   {
     name: {

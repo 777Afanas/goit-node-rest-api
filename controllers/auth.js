@@ -1,3 +1,4 @@
+// бібліотека для хешування паролів
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -7,6 +8,7 @@ import { authSchema } from "../schemas/authSchemas.js";
 async function register(req, res, next) {
   const { password, email, subscription, token } = req.body;
 
+  //  Joi валідація значень полів які валідуються  - та повернення у відповідь
   const { error } = authSchema.validate(req.body, {
     convert: false,
   });
@@ -17,11 +19,17 @@ async function register(req, res, next) {
   }
 
   try {
+    // перевірка наявності в системі User з певним email
+    // const user = await User.findOne({ email: email.toLowerCase()});
     const user = await User.findOne({ email });
+    
+    //якщо findOne не знаходить Userа за таким email повертає null
     if (user !== null) {
       return res.status(409).send({ message: "User already registered" });
     }
-
+    // хешування незворотня операція - можливості відновити початкові дані немає
+    // сіль- рандомний показник, що додається до тексту пароля перед хешуванням
+    // хешуємо пароль - saltRounds - кількість разів хешування
     const passwordHash = await bcrypt.hash(password, 10);
 
     const result = await User.create({

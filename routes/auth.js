@@ -3,6 +3,7 @@ import AuthController from "../controllers/auth.js";
 import authMiddleware from "../middleware/auth.js";
 
 const authRouter = express.Router();
+// парсить body
 const jsonParser = express.json();
 
 

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// опис моделі  користувача для mongoose
 const userSchema = new mongoose.Schema(
   {
     password: {
@@ -9,6 +10,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: [true, "Email is required"],
+      // визначення на рівні БД унікальності
       unique: true,
     },
     subscription: {
