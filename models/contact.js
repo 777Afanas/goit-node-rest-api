@@ -17,7 +17,7 @@ const contactSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    // містить ідентифікатор користувача який вибирає цей контакт
+    // містить ідентифікатор користувача який створює/вибирає цей контакт
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",

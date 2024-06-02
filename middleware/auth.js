@@ -2,6 +2,7 @@
 import { connect } from "mongoose";
 // бібліотека для генерування JSON Web Tokens
 import jwt from "jsonwebtoken";
+// імпортуємо модель для використання запитів до бази даних
 import User from "../models/user.js";
 
 function auth(req, res, next) {
@@ -32,19 +33,21 @@ function auth(req, res, next) {
     }
 
     try {
+      // після валідації токена - робимо запит до БД про юзера в якого decode.id дорівнює його id  в базі даних
       const user = await User.findById(decode.id);
-
+      // якщо нема. ткаого користувача - Invalid token
       if (user === null) {
         return res.status(401).send({ message: "Invalid token" });
       }
-
+      // перевірка  user.token   має дорівнювати token який ми перевіряємо
       if (user.token !== token) {
         return res.status(401).send({ message: "Invalid token" });
       }
 
       //   console.log({ decode });
-      // мутуємо reqest - додаємо   id: decode.id,, що дозволяє вибирати контакти конкретного юзера через jwt-токен 
+      // мутуємо reqest - додаємо   id: decode.id,, що дозволяє вибирати контакти конкретного юзера через jwt-токен
       // - для надання кастомізованої відповіді
+      // якщо потрібно більше даних то використовуємо id: user.id,
       req.user = {
         id: decode.id,
         // email: decode.email,

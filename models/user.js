@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
       enum: ["starter", "pro", "business"],
       default: "starter",
     },
+    // JWT - токен користувча, генерується після login
     token: {
       type: String,
       default: null,

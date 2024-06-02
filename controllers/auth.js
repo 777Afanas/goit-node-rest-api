@@ -78,13 +78,14 @@ async function login(req, res, next) {
       return res.status(401).send({ message: "Email or password is wrong" });
     }
 
-    // генеруємо токен (jwt),   expiresIn: "2 days" - час актуальнсті(валідності/"життя") токену
+    // генеруємо jwt токен (jwt),   expiresIn: "2 days" - час актуальнсті(валідності/"життя") jwt токену
     const token = jwt.sign(
       { id: user._id, token: user.token },
       process.env.JWT_SECRET,
       { expiresIn: "2 days" }
     );
 
+    // записуємо згенерований jwt-токен в БД - в документ юзер
     await User.findByIdAndUpdate(user._id, { token });
 
     res.status(200).json({ token, user: { email, subscription } });
@@ -95,6 +96,7 @@ async function login(req, res, next) {
 
 async function logout(req, res, next) {
   try {
+    // записуємо в поле jwt-токена в БД - документ юзер - null
     await User.findByIdAndUpdate(req.user.id, { token: null });
     res.status(204).end();
   } catch (error) {
