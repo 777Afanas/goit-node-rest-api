@@ -10,7 +10,8 @@ import {
 export const getAllContacts = async (req, res, next) => {
   // console.log({ user: req.user });
   try {
-    // вибираємо контакти одного визначеного юзера - через jwt-токен
+    // вибираємо контакти створені тільки одним 
+    // визначеним (через req.user.id) юзером - через jwt - токен
     const result = await Contact.find({ owner: req.user.id });
 
     res.status(200).json(result);
@@ -70,6 +71,8 @@ export const createContact = async (req, res, next) => {
     email: req.body.email,
     phone: req.body.phone,
     favorite: req.body.favorite,
+    // ідентифікатор юзера який створює цей контакт,  
+    // при створенні контакту ми беремо id користувача з jwt- токена
     owner: req.user.id,
   };
 
