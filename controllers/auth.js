@@ -1,5 +1,6 @@
 // бібліотека для хешування паролів
 import bcrypt from "bcrypt";
+// бібліотека для генерування JSON Web Tokens
 import jwt from "jsonwebtoken";
 
 import User from "../models/user.js";
@@ -50,6 +51,7 @@ async function register(req, res, next) {
 async function login(req, res, next) {
   const { password, email } = req.body;
 
+  //  Joi валідація значень полів які валідуються  - та повернення у відповідь
   const { error } = authSchema.validate(req.body, {
     convert: false,
   });
@@ -60,18 +62,23 @@ async function login(req, res, next) {
   }
 
   try {
+    // перевірка наявності в БД  User з певним email
     const user = await User.findOne({ email });
+
+    //якщо findOne не знаходить Userа за таким email повертає null (unathorised)
     if (user === null) {
       // console.log("email");
       return res.status(401).send({ message: "Email or password is wrong" });
     }
-
+    // порівняння (compare) пароля при введенні з захешованим (в БД)
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (isMatch === false) {
       // console.log("password");
       return res.status(401).send({ message: "Email or password is wrong" });
     }
 
+    // генеруємо токен (jwt),   expiresIn: "2 days" - час актуальнсті(валідності/"життя") токену
     const token = jwt.sign(
       { id: user._id, token: user.token },
       process.env.JWT_SECRET,
