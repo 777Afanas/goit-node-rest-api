@@ -10,7 +10,7 @@ import {
 export const getAllContacts = async (req, res, next) => {
   // console.log({ user: req.user });
   try {
-    // вибираємо контакти одного визначеного юзера
+    // вибираємо контакти одного визначеного юзера - через jwt-токен
     const result = await Contact.find({ owner: req.user.id });
 
     res.status(200).json(result);
