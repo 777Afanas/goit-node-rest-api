@@ -10,7 +10,7 @@ import {
 export const getAllContacts = async (req, res, next) => {
   // console.log({ user: req.user });
   try {
-    // вибираємо контакти створені тільки одним 
+    // вибираємо всі контакти створені тільки одним 
     // визначеним (через req.user.id) юзером - через jwt - токен
     const result = await Contact.find({ owner: req.user.id });
 
@@ -24,17 +24,20 @@ export const getOneContact = async (req, res, next) => {
   const { id } = req.params;
 
   try {
+    // 1  варіант (покроковий) вибору одного контакту стовеного конкретним юзером
+    // вибираємо контакт по id
     // const result = await Contact.findById(id);
-
+    // перевірка контакту
     // if (result === null) {
     //   return res.status(404).json({ message: "Not found" });
     // }
 
+    // друга перевірка - ідентичності contact.owner.toString()   та  req.user.id
     // if (contact.owner.toString() !== req.user.id) {
     //   return res.status(403).json({ message: "Contact is forbidden" });
     //   // return res.status(404).json({ message: "Not found" });
     // }
-
+    // 2 варіант  - вибираємо контакт по співпадінню  "_id: id"  та  "owner: req.user.id"
     const contact = await Contact.findOne({ _id: id, owner: req.user.id });
 
     if (contact === null) {
@@ -51,6 +54,8 @@ export const deleteContact = async (req, res, next) => {
   const { id } = req.params;
 
   try {
+    // видалити контакт може тільки той юзер котрий його створив -
+    // по співпадінню  "_id: id"  та  "owner: req.user.id"
     const result = await Contact.findOneAndDelete({
       _id: id,
       owner: req.user.id,
@@ -108,13 +113,16 @@ export const updateContact = async (req, res, next) => {
       .json({ message: "Body must have at least one field" });
   }
 
+  // Joi валідація значень полів які валідуються  - та повернення у відповідь
   const { error } = updateContactSchema.validate(contact);
-
+  // повернення у відповідь  - Joi валідація
   if (error) {
     return res.status(400).json({ message: "Fields must be filled" });
   }
 
   try {
+    //  змінити  контакт може тільки той юзер котрий його створив -
+    // по співпадінню  "_id: id"  та  "owner: req.user.id"
     const result = await Contact.findOneAndUpdate(
       {
         _id: id,
@@ -149,7 +157,7 @@ export const updateStatusContact = async (req, res, next) => {
       .status(400)
       .json({ message: "Body must have at least one field" });
   }
-
+  // Joi валідація значень полів які валідуються  - та повернення у відповідь
   const { error } = updateStatusContactSchema.validate(contact);
 
   if (error) {
